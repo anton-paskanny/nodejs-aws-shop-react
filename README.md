@@ -36,3 +36,13 @@ Runs tests in console, in browser or with coverage.
 ### `lint`, `prettier`
 
 Runs linting and formatting for all files in `src` folder.
+
+## Task 2 - S3 and Cloud Front
+
+### `task 2.1`
+
+[S3 bucket](http://rsschool-module2-antonp.s3-website-eu-west-1.amazonaws.com/) - the 403 error should be shown
+
+[Cloud Front](https://d21fx92dxw2icu.cloudfront.net/)
+
+
