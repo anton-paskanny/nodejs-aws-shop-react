@@ -41,8 +41,15 @@ Runs linting and formatting for all files in `src` folder.
 
 ### `task 2.1`
 
-[S3 bucket](http://rsschool-module2-antonp.s3-website-eu-west-1.amazonaws.com/) - the 403 error should be shown
+[S3 bucket link](http://rsschool-module2-antonp.s3-website-eu-west-1.amazonaws.com/) - the 403 error should be shown
 
-[Cloud Front](https://d21fx92dxw2icu.cloudfront.net/)
+[Cloud Front link](https://d21fx92dxw2icu.cloudfront.net/) - should be available.
 
+### `task 2.2`
+
+To deploy S3 bucket, go the `cdk-ts` folder and run `npm run cdk:deploy` command. The configuration is described in `cdk-ts-stack.ts` file.
+
+Whenever you redeploy your website to the S3 bucket, CloudFront will automatically serve the latest content without needing an explicit invalidation.
+
+P.S. For both tasks two different buckets are used.
 
