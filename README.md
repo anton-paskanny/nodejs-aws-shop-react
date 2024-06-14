@@ -36,3 +36,28 @@ Runs tests in console, in browser or with coverage.
 ### `lint`, `prettier`
 
 Runs linting and formatting for all files in `src` folder.
+
+## Task 2 - S3 and Cloud Front
+
+### `task 2.1`
+
+[S3 bucket link](http://rsschool-module2-antonp.s3-website-eu-west-1.amazonaws.com/) - the 403 error should be shown
+
+[Cloud Front link](https://d21fx92dxw2icu.cloudfront.net/) - should be available.
+
+Fro this task S3 bucket and Cloud Front Distribution were created manually.
+
+### `task 2.2`
+
+To deploy S3 bucket, go the `cdk-ts` folder and run `npm run cdk:deploy` command. The configuration is described in `cdk-ts-stack.ts` file.
+
+Whenever you redeploy your website to the S3 bucket, CloudFront will automatically serve the latest content without needing an explicit invalidation.
+
+Links:
+
+[S3 bucket link](http://rs-aws-module2-antonp-automated.s3-website-eu-west-1.amazonaws.com/) - the 403 error should be shown
+
+[Cloud Front link](https://d3u8c9svdogi62.cloudfront.net/) - should be available.
+
+P.S. For both tasks two different buckets and cloud front distributions are used.
+
