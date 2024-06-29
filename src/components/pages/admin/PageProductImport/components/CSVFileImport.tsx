@@ -26,6 +26,11 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   const uploadFile = async () => {
     console.log("uploadFile to", url);
 
+    if (!file) {
+      console.log('No file was found');
+      return;
+    }
+
     // Get the presigned URL
     const response = await axios({
       method: "GET",
@@ -41,7 +46,7 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
       body: file,
     });
     console.log("Result: ", result);
-    setFile("");
+    setFile(undefined);
   };
   return (
     <Box>
