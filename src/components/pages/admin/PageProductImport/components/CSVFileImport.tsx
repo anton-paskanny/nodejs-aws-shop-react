@@ -27,7 +27,7 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
     console.log("uploadFile to", url);
 
     if (!file) {
-      console.log('No file was found');
+      console.log("No file was found");
       return;
     }
 
@@ -37,6 +37,9 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
       url,
       params: {
         name: encodeURIComponent(file.name),
+      },
+      headers: {
+        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
       },
     });
     console.log("File to upload: ", file.name);
