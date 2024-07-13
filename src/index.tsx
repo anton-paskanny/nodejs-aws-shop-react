@@ -7,11 +7,32 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { theme } from "~/theme";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { refetchOnWindowFocus: false, retry: false, staleTime: Infinity },
+    mutations: { retry: false },
   },
+});
+
+queryClient.getQueryCache().subscribe((event) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (event?.type === "error" && event?.query?.state?.error) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const error = event.query.state.error;
+
+    if (error.response?.status === 401) {
+      toast.error("Unauthorized access. Please log in.");
+    } else if (error.response?.status === 403) {
+      toast.error(
+        "Forbidden access. You don't have permission to view this resource."
+      );
+    }
+  }
 });
 
 if (import.meta.env.DEV) {
@@ -29,6 +50,7 @@ root.render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <App />
+          <ToastContainer />
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
