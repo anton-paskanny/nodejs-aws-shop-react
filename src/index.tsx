@@ -7,10 +7,35 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { theme } from "~/theme";
+import axios, { AxiosError } from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    switch (error.response?.status) {
+      case 401:
+        toast.error("Unauthorized access. Please log in.");
+        break;
+      case 403:
+        toast.error(
+          "Forbidden access. You don't have permission to view this resource."
+        );
+        break;
+    }
+    return Promise.reject(error);
+  }
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchOnWindowFocus: false, retry: false, staleTime: Infinity },
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity,
+    },
+    mutations: { retry: false },
   },
 });
 
@@ -29,6 +54,7 @@ root.render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <App />
+          <ToastContainer />
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
