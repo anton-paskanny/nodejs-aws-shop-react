@@ -2,39 +2,83 @@ import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { CartItem } from "~/models/CartItem";
+import { ItemInCart } from "~/models/CartItem";
 import { formatAsPrice } from "~/utils/utils";
 import AddProductToCart from "~/components/AddProductToCart/AddProductToCart";
+import { useAvailableProducts } from "~/queries/products";
+import { AvailableProduct } from "~/models/Product";
 
 type CartItemsProps = {
-  items: CartItem[];
+  items: ItemInCart[];
   isEditable: boolean;
 };
 
-export default function CartItems({ items, isEditable }: CartItemsProps) {
-  const totalPrice: number = items.reduce(
-    (total, item) => item.count * item.product.price + total,
-    0
+type CartItemComponentProps = {
+  cartItem: ItemInCart;
+  isEditable: boolean;
+  availableProducts: AvailableProduct[];
+};
+
+export const CartItemComponent = ({
+  cartItem,
+  isEditable,
+  availableProducts,
+}: CartItemComponentProps) => {
+  const fullProduct = availableProducts.find(
+    (item) => item.id === cartItem.productId
   );
+
+  if (!fullProduct) {
+    return (
+      <Typography>
+        No product data was found for {cartItem.productId} id
+      </Typography>
+    );
+  }
+
+  return (
+    <ListItem
+      sx={{ padding: (theme) => theme.spacing(1, 0) }}
+      key={cartItem.productId}
+    >
+      {isEditable && <AddProductToCart product={fullProduct} />}
+      <ListItemText
+        primary={fullProduct.title}
+        secondary={fullProduct.description}
+      />
+      <Typography variant="body2">
+        {formatAsPrice(fullProduct.price)} x {cartItem.count} ={" "}
+        {formatAsPrice(fullProduct.price * cartItem.count)}
+      </Typography>
+    </ListItem>
+  );
+};
+
+export default function CartItems({ items, isEditable }: CartItemsProps) {
+  const { data = [], isLoading } = useAvailableProducts();
+
+  const totalPrice: number = items.reduce((total, item) => {
+    const fullProduct = data.find((fullP) => fullP.id === item.productId);
+
+    const itemTotal = item.count * (fullProduct ? fullProduct.price : 0);
+
+    return total + itemTotal;
+  }, 0);
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <>
       <List disablePadding>
-        {items.map((cartItem: CartItem) => (
-          <ListItem
-            sx={{ padding: (theme) => theme.spacing(1, 0) }}
-            key={cartItem.product.id}
-          >
-            {isEditable && <AddProductToCart product={cartItem.product} />}
-            <ListItemText
-              primary={cartItem.product.title}
-              secondary={cartItem.product.description}
-            />
-            <Typography variant="body2">
-              {formatAsPrice(cartItem.product.price)} x {cartItem.count} ={" "}
-              {formatAsPrice(cartItem.product.price * cartItem.count)}
-            </Typography>
-          </ListItem>
+        {items.map((cartItem: ItemInCart) => (
+          <CartItemComponent
+            key={cartItem.productId}
+            cartItem={cartItem}
+            isEditable={isEditable}
+            availableProducts={data}
+          />
         ))}
         <ListItem sx={{ padding: (theme) => theme.spacing(1, 0) }}>
           <ListItemText primary="Shipping" />
