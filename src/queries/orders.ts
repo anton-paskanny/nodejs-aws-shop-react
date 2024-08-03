@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import React from "react";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import API_PATHS from "~/constants/apiPaths";
+import { USER_TOKEN_FIELD_LS } from "~/constants/localStorage";
 import { OrderStatus } from "~/constants/order";
 import { Order } from "~/models/Order";
 
@@ -34,12 +35,34 @@ export function useUpdateOrderStatus() {
 }
 
 export function useSubmitOrder() {
+  const headers = {};
+  const token = localStorage.getItem(USER_TOKEN_FIELD_LS);
+
+  if (token) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    headers.Authorization = `Basic ${token}`;
+  }
+
   return useMutation((values: Omit<Order, "id">) => {
-    return axios.put<Omit<Order, "id">>(`${API_PATHS.order}/order`, values, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
+    const body = {
+      payment: {
+        type: "default",
       },
-    });
+      delivery: {
+        type: "default",
+        address: values.address.address,
+      },
+      comments: values.address.comment,
+    };
+
+    return axios.post<Omit<Order, "id">>(
+      `${API_PATHS.order}/api/profile/cart/checkout`,
+      body,
+      {
+        headers,
+      }
+    );
   });
 }
 
